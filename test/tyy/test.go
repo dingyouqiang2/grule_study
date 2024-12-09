@@ -18,6 +18,7 @@ func executeEbsGrule(ebsCost *EBSCost) {
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdGenericPerMonthCostRule)))
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdPerMonthCostRule)))
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSataPerMonthCostRule)))
+	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdGenericPerHourCostRule)))
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSasPerMonthCostRule)))
 	kb, _ := lib.NewKnowledgeBaseInstance("TestEBSCost", "1.0.0")
 	
@@ -63,56 +64,65 @@ type EBSCost struct {   // 云硬盘费用
 	SyshdType   string  // 系统盘类型
 	InstanceCnt int     // 系统盘容量
 	CycleCount  int     // 包月时长
-	Hour 		int     // 按量小时
-	Cost        float32 // 总费用
+	Cost        float32 // 费用
 }
 
 const (
 	EbsSsdGenericPerMonthCostRule = `
-		rule EbsSsdGenericCostRule "通用型SSD磁盘(SSD-generic) 计费规则" salience 10 {
+		rule EbsSsdGenericPerMonthCostRule "通用型SSD磁盘(SSD-generic) 包月计费规则" salience 10 {
 			when
 				EBSCost.BillMode == 1 && EBSCost.SyshdType == "SSD-generic"
 			Then
 				SSD_GENERIC = 0.7;
 				EBSCost.Cost = SSD_GENERIC * EBSCost.InstanceCnt * EBSCost.CycleCount;
-				Retract("EbsSsdGenericCostRule");
+				Retract("EbsSsdGenericPerMonthCostRule");
 		}
 	`
 	EbsSsdPerMonthCostRule = `
-		rule EbsSsdCostRule "超高IO(SSD) 计费规则" salience 10 {
+		rule EbsSsdPerMonthCostRule "超高IO(SSD) 包月计费规则" salience 10 {
 			when
 				EBSCost.BillMode == 1 && EBSCost.SyshdType == "SSD"
 			Then
 				SSD = 1.2;
 				EBSCost.Cost = SSD * EBSCost.InstanceCnt * EBSCost.CycleCount;
-				Retract("EbsSsdCostRule");
+				Retract("EbsSsdPerMonthCostRule");
 		}
 	`
 	EbsSataPerMonthCostRule = `
-		rule EbsSataCostRule "普通IO(SATA) 计费规则" salience 10 {
+		rule EbsSataPerMonthCostRule "普通IO(SATA) 包月计费规则" salience 10 {
 			when
 				EBSCost.BillMode == 1 && EBSCost.SyshdType == "SATA"
 			Then
 				SATA = 0.3;
 				EBSCost.Cost = SATA * EBSCost.InstanceCnt * EBSCost.CycleCount;
-				Retract("EbsSataCostRule");
+				Retract("EbsSataPerMonthCostRule");
 		}
 	`
 	EbsSasPerMonthCostRule = `
-		rule EbsSasCostRule "高IO(SAS) 计费规则" salience 10 {
+		rule EbsSasPerMonthCostRule "高IO(SAS) 包月计费规则" salience 10 {
 			when
 				EBSCost.BillMode == 1 && EBSCost.SyshdType == "SAS"
 			Then
 				SAS = 0.4;
 				EBSCost.Cost = SAS * EBSCost.InstanceCnt * EBSCost.CycleCount;
-				Retract("EbsSasCostRule");
+				Retract("EbsSasPerMonthCostRule");
+		}
+	`
+	EbsSsdGenericPerHourCostRule = `
+		rule EbsSsdGenericPerHourCostRule "通用型SSD磁盘(SSD-generic) 按量计费规则" salience 10 {
+			when
+				EBSCost.BillMode == 0 && EBSCost.SyshdType == "SSD-generic"
+			Then
+				SSD_GENERIC = 0.00097;
+				EBSCost.Cost = SSD_GENERIC * EBSCost.InstanceCnt;
+				Retract("EbsSsdGenericPerHourCostRule");
 		}
 	`
 )
 
 func main() {
 	ebsCost := &EBSCost{
-		BillMode:    1,
+		BillMode:    0,
 		SyshdType:   "SSD-generic",
 		CycleCount:  3,
 		InstanceCnt: 40,
