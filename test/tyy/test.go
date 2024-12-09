@@ -12,14 +12,16 @@ import (
 func executeEbsGrule(ebsCost *EBSCost) {
 	dataContext := ast.NewDataContext()
 	dataContext.Add("EBSCost", ebsCost)
+
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdGenericCostRule)))
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdCostRule)))
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSataCostRule)))
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSasCostRule)))
-	eng1 := &engine.GruleEngine{MaxCycle: 5}
 	kb, _ := lib.NewKnowledgeBaseInstance("TestEBSCost", "1.0.0")
+	
+	eng1 := &engine.GruleEngine{MaxCycle: 5}
 	eng1.Execute(dataContext, kb)
 }
 
