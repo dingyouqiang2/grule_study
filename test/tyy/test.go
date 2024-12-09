@@ -20,6 +20,7 @@ func executeEbsGrule(ebsCost *EBSCost) {
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSataPerMonthCostRule)))
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdGenericPerHourCostRule)))
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSasPerMonthCostRule)))
+	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSataPerHourCostRule)))
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdPerHourCostRule)))
 	kb, _ := lib.NewKnowledgeBaseInstance("TestEBSCost", "1.0.0")
 	
@@ -129,12 +130,22 @@ const (
 				Retract("EbsSsdPerHourCostRule");
 		}
 	`
+	EbsSataPerHourCostRule = `
+		rule EbsSataPerHourCostRule "普通IO(SATA) 包月计费规则" salience 10 {
+			when
+				EBSCost.BillMode == 0 && EBSCost.SyshdType == "SATA"
+			Then
+				SATA = 0.0005;
+				EBSCost.Cost = SATA * EBSCost.InstanceCnt;
+				Retract("EbsSataPerHourCostRule");
+		}
+	`
 )
 
 func main() {
 	ebsCost := &EBSCost{
 		BillMode:    0, // 按量(0)/包年月(1)
-		SyshdType:   "SSD", // 系统盘类型
+		SyshdType:   "SATA", // 系统盘类型
 		CycleCount:  3, // 包月的时长
 		InstanceCnt: 40, // 系统盘容量
 	}
