@@ -15,10 +15,10 @@ func executeEbsGrule(ebsCost *EBSCost) {
 
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
-	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdGenericCostRule)))
-	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdCostRule)))
-	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSataCostRule)))
-	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSasCostRule)))
+	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdGenericPerMonthCostRule)))
+	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdPerMonthCostRule)))
+	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSataPerMonthCostRule)))
+	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSasPerMonthCostRule)))
 	kb, _ := lib.NewKnowledgeBaseInstance("TestEBSCost", "1.0.0")
 	
 	eng1 := &engine.GruleEngine{MaxCycle: 5}
@@ -58,7 +58,7 @@ type EcsCost struct {
 			0.0009/1GB/小时 (40GB -- 0.036)
 */
 
-type EBSCost struct { // 云硬盘费用
+type EBSCost struct {   // 云硬盘费用
 	BillMode    int     // 按量(0)/包年月(1)
 	SyshdType   string  // 系统盘类型
 	InstanceCnt int     // 系统盘容量
@@ -68,7 +68,7 @@ type EBSCost struct { // 云硬盘费用
 }
 
 const (
-	EbsSsdGenericCostRule = `
+	EbsSsdGenericPerMonthCostRule = `
 		rule EbsSsdGenericCostRule "通用型SSD磁盘(SSD-generic) 计费规则" salience 10 {
 			when
 				EBSCost.BillMode == 1 && EBSCost.SyshdType == "SSD-generic"
@@ -78,7 +78,7 @@ const (
 				Retract("EbsSsdGenericCostRule");
 		}
 	`
-	EbsSsdCostRule = `
+	EbsSsdPerMonthCostRule = `
 		rule EbsSsdCostRule "超高IO(SSD) 计费规则" salience 10 {
 			when
 				EBSCost.BillMode == 1 && EBSCost.SyshdType == "SSD"
@@ -88,7 +88,7 @@ const (
 				Retract("EbsSsdCostRule");
 		}
 	`
-	EbsSataCostRule = `
+	EbsSataPerMonthCostRule = `
 		rule EbsSataCostRule "普通IO(SATA) 计费规则" salience 10 {
 			when
 				EBSCost.BillMode == 1 && EBSCost.SyshdType == "SATA"
@@ -98,7 +98,7 @@ const (
 				Retract("EbsSataCostRule");
 		}
 	`
-	EbsSasCostRule = `
+	EbsSasPerMonthCostRule = `
 		rule EbsSasCostRule "高IO(SAS) 计费规则" salience 10 {
 			when
 				EBSCost.BillMode == 1 && EBSCost.SyshdType == "SAS"
