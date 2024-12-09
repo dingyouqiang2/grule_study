@@ -9,6 +9,30 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
+type ruleBuilder struct {
+	lib         *ast.KnowledgeLibrary
+	ruleBuilder *builder.RuleBuilder
+	rules       []string
+}
+
+func initRuleBuilder(rules []string) *ruleBuilder {
+	rb := &ruleBuilder{rules: rules}
+	return rb
+}
+
+func (rb *ruleBuilder) build() {
+	rb.lib = ast.NewKnowledgeLibrary()
+	rb.ruleBuilder = builder.NewRuleBuilder(rb.lib)
+	for _, rule := range rb.rules {
+		rb.ruleBuilder.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(rule)))
+	}
+}
+
+func (rb *ruleBuilder) getKnowledeBase() *ast.KnowledgeBase {
+	kb, _ := rb.lib.NewKnowledgeBaseInstance("TestEBSCost", "1.0.0")
+	return kb
+}
+
 func executeEbsGrule(ebsCost *EBSCost) {
 	dataContext := ast.NewDataContext()
 	dataContext.Add("EBSCost", ebsCost)
@@ -23,8 +47,9 @@ func executeEbsGrule(ebsCost *EBSCost) {
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSataPerHourCostRule)))
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdPerHourCostRule)))
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSasPerHourCostRule)))
+
 	kb, _ := lib.NewKnowledgeBaseInstance("TestEBSCost", "1.0.0")
-	
+
 	eng1 := &engine.GruleEngine{MaxCycle: 5}
 	eng1.Execute(dataContext, kb)
 }
@@ -44,14 +69,14 @@ type EcsCost struct {
 
 /*
 		单价获取: 将磁盘容量加1G, 获得每G的价格, 然后乘以40GB就是基本价格
-		计算公式: 
+		计算公式:
 		    包月费用 = 包月时长 * 单价 * 磁盘容量
 			按量费用 = 按量小时 * 单价 * 磁盘容量
 
-	    通用型SSD磁盘(SSD-generic) 
+	    通用型SSD磁盘(SSD-generic)
 			0.7/1GB/月 (40GB -- 28元)
 			0.00097/1GB/小时 (40GB -- 0.0388)
-	    超高IO(SSD) 
+	    超高IO(SSD)
 			1.2/1GB月 146 (40GB -- 48元)
 			0.0017/1GB/小时 (40GB -- 0.068)
 	    普通IO(SATA)
@@ -62,7 +87,7 @@ type EcsCost struct {
 			0.0009/1GB/小时 (40GB -- 0.036)
 */
 
-type EBSCost struct {   // 云硬盘费用
+type EBSCost struct { // 云硬盘费用
 	BillMode    int     // 按量(0)/包年月(1)
 	SyshdType   string  // 系统盘类型
 	InstanceCnt int     // 系统盘容量
@@ -155,11 +180,30 @@ const (
 
 func main() {
 	ebsCost := &EBSCost{
-		BillMode:    0, // 按量(0)/包年月(1)
-		SyshdType:   "SAS", // 系统盘类型
-		CycleCount:  3, // 包月的时长
-		InstanceCnt: 40, // 系统盘容量
+		BillMode:    0,             // 按量(0)/包年月(1)
+		SyshdType:   "SSD-generic", // 系统盘类型
+		CycleCount:  3,             // 包月的时长
+		InstanceCnt: 40,            // 系统盘容量
 	}
-	executeEbsGrule(ebsCost)
-	log.Println(ebsCost)
+	dataContext := ast.NewDataContext()
+	dataContext.Add("EBSCost", ebsCost)
+	rb := initRuleBuilder([]string{
+		EbsSsdGenericPerMonthCostRule,
+		EbsSsdPerMonthCostRule,
+		EbsSataPerMonthCostRule,
+		EbsSasPerMonthCostRule,
+		EbsSsdGenericPerHourCostRule,
+		EbsSsdPerHourCostRule,
+		EbsSataPerHourCostRule,
+		EbsSasPerHourCostRule,
+	})
+	rb.build()
+	kb := rb.getKnowledeBase()
+	eng1 := &engine.GruleEngine{MaxCycle: 5}
+	eng1.Execute(dataContext, kb)
+	if ebsCost.BillMode == 0 {
+		log.Printf("云硬盘配置费用 ¥ %.3f / 小时\n", ebsCost.Cost)
+	} else if ebsCost.BillMode == 1 {
+		log.Printf("云硬盘配置费用 ¥ %.3f\n", ebsCost.Cost)
+	}
 }
