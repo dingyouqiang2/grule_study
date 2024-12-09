@@ -40,18 +40,30 @@ type EcsCost struct {
 
 /*
 		单价获取: 将磁盘容量加1G, 获得每G的价格, 然后乘以40GB就是基本价格
-		计算公式: 费用 = 单价 * 磁盘容量
+		计算公式: 
+		    包月费用 = 包月时长 * 单价 * 磁盘容量
+			按量费用 = 按量小时 * 单价 * 磁盘容量
 
-	    通用型SSD磁盘(SSD-generic) 0.7/1GB/月 (40GB -- 28元)
-	    超高IO(SSD) 1.2/1GB月 146 (40GB -- 48元)
-	    普通IO(SATA) 0.3/1GB月 36 (40GB -- 12元)
-	    高IO(SAS) 0.4/1GB月 48 (40GB -- 16元)
+	    通用型SSD磁盘(SSD-generic) 
+			0.7/1GB/月 (40GB -- 28元)
+			0.00097/1GB/小时 (40GB -- 0.0388)
+	    超高IO(SSD) 
+			1.2/1GB月 146 (40GB -- 48元)
+			0.0017/1GB/小时 (40GB -- 0.068)
+	    普通IO(SATA)
+			0.3/1GB月 36 (40GB -- 12元)
+			0.0005/1GB/小时 (40GB -- 0.02)
+	    高IO(SAS)
+			0.4/1GB月 48 (40GB -- 16元)
+			0.0009/1GB/小时 (40GB -- 0.036)
 */
+
 type EBSCost struct { // 云硬盘费用
 	BillMode    int     // 按量(0)/包年月(1)
 	SyshdType   string  // 系统盘类型
 	InstanceCnt int     // 系统盘容量
 	CycleCount  int     // 包月时长
+	Hour 		int     // 按量小时
 	Cost        float32 // 总费用
 }
 
@@ -101,7 +113,7 @@ const (
 func main() {
 	ebsCost := &EBSCost{
 		BillMode:    1,
-		SyshdType:   "SAS",
+		SyshdType:   "SSD-generic",
 		CycleCount:  3,
 		InstanceCnt: 40,
 	}
