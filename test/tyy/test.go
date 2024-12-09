@@ -9,6 +9,20 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
+func executeEbsGrule(ebsCost *EBSCost) {
+	dataContext := ast.NewDataContext()
+	dataContext.Add("EBSCost", ebsCost)
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdGenericCostRule)))
+	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdCostRule)))
+	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSataCostRule)))
+	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSasCostRule)))
+	eng1 := &engine.GruleEngine{MaxCycle: 5}
+	kb, _ := lib.NewKnowledgeBaseInstance("TestEBSCost", "1.0.0")
+	eng1.Execute(dataContext, kb)
+}
+
 type EcsCost struct {
 	BillMode   int    // 按量/包年月
 	Region     string // 可用区
@@ -89,16 +103,6 @@ func main() {
 		CycleCount:  3,
 		InstanceCnt: 40,
 	}
-	dataContext := ast.NewDataContext()
-	dataContext.Add("EBSCost", ebsCost)
-	lib := ast.NewKnowledgeLibrary()
-	rb := builder.NewRuleBuilder(lib)
-	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdGenericCostRule)))
-	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdCostRule)))
-	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSataCostRule)))
-	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSasCostRule)))
-	eng1 := &engine.GruleEngine{MaxCycle: 5}
-	kb, _ := lib.NewKnowledgeBaseInstance("TestEBSCost", "1.0.0")
-	eng1.Execute(dataContext, kb)
+	executeEbsGrule(ebsCost)
 	log.Println(ebsCost)
 }
