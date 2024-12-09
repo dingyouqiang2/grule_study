@@ -28,7 +28,6 @@ func main() {
     })
     r.POST("/number/", func(c *gin.Context) {
         textareaContent := c.PostForm("textarea")
-
         exponent := &ExponentData{
             Check: 6.67428e-11,
             Set:   0,
