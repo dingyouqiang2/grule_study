@@ -22,6 +22,7 @@ func executeEbsGrule(ebsCost *EBSCost) {
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSasPerMonthCostRule)))
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSataPerHourCostRule)))
 	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSsdPerHourCostRule)))
+	rb.BuildRuleFromResource("TestEBSCost", "1.0.0", pkg.NewBytesResource([]byte(EbsSasPerHourCostRule)))
 	kb, _ := lib.NewKnowledgeBaseInstance("TestEBSCost", "1.0.0")
 	
 	eng1 := &engine.GruleEngine{MaxCycle: 5}
@@ -131,7 +132,7 @@ const (
 		}
 	`
 	EbsSataPerHourCostRule = `
-		rule EbsSataPerHourCostRule "普通IO(SATA) 包月计费规则" salience 10 {
+		rule EbsSataPerHourCostRule "普通IO(SATA) 按量计费规则" salience 10 {
 			when
 				EBSCost.BillMode == 0 && EBSCost.SyshdType == "SATA"
 			Then
@@ -140,12 +141,22 @@ const (
 				Retract("EbsSataPerHourCostRule");
 		}
 	`
+	EbsSasPerHourCostRule = `
+		rule EbsSasPerHourCostRule "高IO(SAS) 按量计费规则" salience 10 {
+			when
+				EBSCost.BillMode == 0 && EBSCost.SyshdType == "SAS"
+			Then
+				SAS = 0.0009;
+				EBSCost.Cost = SAS * EBSCost.InstanceCnt;
+				Retract("EbsSasPerHourCostRule");
+		}
+	`
 )
 
 func main() {
 	ebsCost := &EBSCost{
 		BillMode:    0, // 按量(0)/包年月(1)
-		SyshdType:   "SATA", // 系统盘类型
+		SyshdType:   "SAS", // 系统盘类型
 		CycleCount:  3, // 包月的时长
 		InstanceCnt: 40, // 系统盘容量
 	}
