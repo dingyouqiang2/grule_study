@@ -1,14 +1,31 @@
 <html>
-    <p>请编写你的Grule规则</p>
-    <form name="grule" method="POST" action="/grule/form/">
-        规则名称: <input name="ruleName"></input><br/>
-        规则描述: <input name="ruleDesc"></input><br/>
-        规则优先级: <input name="ruleSalience"></input><br />
-        规则条件: <input name="ruleCondition"></input><button>增加</button><br/>
-        规则逻辑: <input name="ruleLogic"></input><button>增加</button><br/>
-        <button type="submit">确认</button>
-    </form>
-    <script>
-        
-    </script>
+<p>请编写你的Grule规则</p>
+<form name="grule" method="POST" action="/grule/form/">
+    规则名称: <input name="ruleName"></input><br/>
+    规则描述: <input name="ruleDesc"></input><br/>
+    规则优先级: <input name="ruleSalience"></input><br/>
+    <div>
+        规则条件: <input name="ruleCondition"></input>
+        <button type="button" id="addRuleCondition">增加</button>
+    </div>
+    <div>
+        规则逻辑: <input name="ruleLogic"></input>
+        <button type="button">增加</button>
+    </div>
+    <button type="submit">确认</button>
+</form>
+<script>
+var conditionIndex = 1;
+var addRuleConditionButton = document.getElementById('addRuleCondition');
+var ruleConditionContainer = addRuleConditionButton.parentNode;
+
+addRuleConditionButton.addEventListener('click', function() {
+    var newInput = document.createElement('input');
+    newInput.name = 'ruleCondition' + conditionIndex;
+    newInput.type = 'text';
+    ruleConditionContainer.insertBefore(newInput, addRuleConditionButton);
+
+    conditionIndex++;
+});
+</script>
 </html>
