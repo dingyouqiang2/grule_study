@@ -31,8 +31,16 @@ func main() {
         c.HTML(http.StatusOK, "grule.tmpl", gin.H{})
     })
     r.POST("/grule/form/", func(c *gin.Context) {
-        gruleForm := c.PostForm("grule_add")
-        log.Println(gruleForm)
+        ruleName := c.PostForm("ruleName")
+        ruleDesc := c.PostForm("ruleDesc")
+        ruleCondition := c.PostForm("ruleCondition")
+        ruleLogic := c.PostForm("ruleLogic")
+        
+        log.Println("Rule Name:", ruleName)
+        log.Println("Rule Description:", ruleDesc)
+        log.Println("Rule Condition:", ruleCondition)
+        log.Println("Rule Logic:", ruleLogic)
+        c.Redirect(http.StatusFound, "/grule/form/")
     })
     r.POST("/number/", func(c *gin.Context) {
         textareaContent := c.PostForm("textarea")
