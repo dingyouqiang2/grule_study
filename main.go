@@ -44,9 +44,9 @@ rule %s "%s" salience %s {
     when
         %s
     Then
-        %s
+        %s;
 }`, 
-        form.RuleName, form.RuleDesc, form.RuleSalience, strings.Join(form.RuleConditions, "&&"), strings.Join(form.RuleLogic, ";\n"))
+        form.RuleName, form.RuleDesc, form.RuleSalience, strings.Join(form.RuleConditions, " && "), strings.Join(form.RuleLogic, ";\n\t\t"))
         err := ioutil.WriteFile(fmt.Sprintf("grule/%s.grl", form.RuleName), []byte(grule), 0644)
         if err != nil {
             log.Println(err)
