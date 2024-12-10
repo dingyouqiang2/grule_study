@@ -15,8 +15,6 @@
     <button type="submit">确认</button>
 </form>
 <script>
-var conditionIndex = 1;
-var logicIndex = 1;
 var addRuleConditionButton = document.getElementById('addRuleCondition');
 var addRuleLogicButton = document.getElementById('addRuleLogic');
 var ruleConditionContainer = addRuleConditionButton.parentNode;
@@ -24,7 +22,7 @@ var ruleLogicContainer = addRuleLogicButton.parentNode;
 
 addRuleConditionButton.addEventListener('click', function() {
     var newInput = document.createElement('input');
-    newInput.name = 'ruleCondition' + conditionIndex;
+    newInput.name = 'ruleCondition';
     newInput.type = 'text';
     ruleConditionContainer.insertBefore(newInput, addRuleConditionButton);
     conditionIndex++;
@@ -32,7 +30,7 @@ addRuleConditionButton.addEventListener('click', function() {
 
 addRuleLogicButton.addEventListener('click', function() {
     var newInput = document.createElement('input');
-    newInput.name = 'ruleLogic' + logicIndex;
+    newInput.name = 'ruleLogic';
     newInput.type = 'text';
     ruleLogicContainer.insertBefore(newInput, addRuleLogicButton);
     logicIndex++;

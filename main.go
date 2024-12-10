@@ -16,6 +16,14 @@ type ExponentData struct {
 	Set   float64
 }
 
+type RuleForm struct {
+    RuleName      string
+    RuleDesc      string
+    RuleSalience string
+    RuleConditions []string `form:"ruleCondition"`
+    RuleLogic     []string `form:"ruleLogic"`
+}
+
 func main() {
 	r := gin.Default()
     r.LoadHTMLGlob("templates/*")
@@ -26,17 +34,9 @@ func main() {
         c.HTML(http.StatusOK, "grule.tmpl", gin.H{})
     })
     r.POST("/grule/form/", func(c *gin.Context) {
-        ruleName := c.PostForm("ruleName")
-        ruleDesc := c.PostForm("ruleDesc")
-        ruleSalience := c.PostForm("ruleSalience")
-        ruleCondition := c.PostForm("ruleCondition")
-        ruleLogic := c.PostForm("ruleLogic")
-        
-        log.Println("Rule Name:", ruleName)
-        log.Println("Rule Description:", ruleDesc)
-        log.Println("Rule Salience:", ruleSalience)
-        log.Println("Rule Condition:", ruleCondition)
-        log.Println("Rule Logic:", ruleLogic)
+        var form RuleForm
+        c.ShouldBind(&form)
+        log.Println(form)
         c.Redirect(http.StatusFound, "/grule/form/")
     })
     r.POST("/number/", func(c *gin.Context) {
