@@ -18,11 +18,6 @@ type ExponentData struct {
 
 func main() {
 	r := gin.Default()
-    r.GET("/ping", func(c *gin.Context) {
-        c.JSON(200, gin.H{
-            "message": "pong",
-        })
-    })
     r.LoadHTMLGlob("templates/*")
 	r.GET("/index", func(c *gin.Context) {
         c.HTML(http.StatusOK, "index.tmpl", gin.H{})
@@ -33,11 +28,13 @@ func main() {
     r.POST("/grule/form/", func(c *gin.Context) {
         ruleName := c.PostForm("ruleName")
         ruleDesc := c.PostForm("ruleDesc")
+        ruleSalience := c.PostForm("ruleSalience")
         ruleCondition := c.PostForm("ruleCondition")
         ruleLogic := c.PostForm("ruleLogic")
         
         log.Println("Rule Name:", ruleName)
         log.Println("Rule Description:", ruleDesc)
+        log.Println("Rule Salience:", ruleSalience)
         log.Println("Rule Condition:", ruleCondition)
         log.Println("Rule Logic:", ruleLogic)
         c.Redirect(http.StatusFound, "/grule/form/")
