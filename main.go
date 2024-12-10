@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
@@ -46,8 +47,10 @@ rule %s "%s" salience %s {
         %s
 }`, 
         form.RuleName, form.RuleDesc, form.RuleSalience, strings.Join(form.RuleConditions, "&&"), strings.Join(form.RuleLogic, ";\n"))
-		log.Println(form)
-		log.Println(grule)
+        err := ioutil.WriteFile(fmt.Sprintf("grule/%s.grl", form.RuleName), []byte(grule), 0644)
+        if err != nil {
+            log.Println(err)
+        }
 		c.Redirect(http.StatusFound, "/grule/form/")
 	})
 	r.POST("/number/", func(c *gin.Context) {
