@@ -106,6 +106,7 @@ const (
 				Retract("EbsSsdGenericPerMonthCostRule");
 		}
 	`
+	
 	EbsSsdPerMonthCostRule = `
 		rule EbsSsdPerMonthCostRule "超高IO(SSD) 包月计费规则" salience 10 {
 			when

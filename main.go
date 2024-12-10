@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
@@ -36,7 +38,16 @@ func main() {
 	r.POST("/grule/form/", func(c *gin.Context) {
 		var form RuleForm
 		c.ShouldBind(&form)
+		grule := fmt.Sprintf(`
+rule %s "%s" salience %s {
+    when
+        %s
+    Then
+        %s
+}`, 
+        form.RuleName, form.RuleDesc, form.RuleSalience, strings.Join(form.RuleConditions, "&&"), strings.Join(form.RuleLogic, ";\n"))
 		log.Println(form)
+		log.Println(grule)
 		c.Redirect(http.StatusFound, "/grule/form/")
 	})
 	r.POST("/number/", func(c *gin.Context) {
