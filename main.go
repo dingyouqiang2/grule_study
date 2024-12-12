@@ -1,14 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"grule_study/controller"
-	models "grule_study/model"
-	"grule_study/utils"
-	"io/ioutil"
-	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hyperjumptech/grule-rule-engine/ast"
