@@ -29,10 +29,10 @@ func main() {
 	})
 	r.POST("/grule/form/", controller.WriteGruleForm)
 	r.GET("/ebs/", func(c *gin.Context) {
-
+		c.HTML(http.StatusOK, "ebs.tmpl", gin.H{})
 	})
 	r.POST("/ebs/", func(c *gin.Context) {
-		
+
 	})
 	// 这里测试前端直接传递grule给后端执行
 	r.POST("/number/", func(c *gin.Context) {

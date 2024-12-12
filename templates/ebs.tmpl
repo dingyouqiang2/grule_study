@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud Storage Configuration</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fb; /* 设置整个页面的背景颜色 */
+    margin: 0; /* 移除默认的页面边距 */
+    padding-bottom: 60px; /* 为底部固定栏留出空间 */
+  }
+  .container {
+    width: 50%;
+    margin: 20px 0 0 20px; /* 在顶部和左侧添加边距 */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white; /* 设置容器背景颜色为白色 */
+  }
+  .section {
+    margin-bottom: 20px;
+  }
+  .section label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .section input[type="number"] {
+    width: 50px;
+  }
+  .section select {
+    margin-right: 10px;
+  }
+  .section .add-disk, .section .add-filesystem {
+    color: blue;
+    cursor: pointer;
+  }
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: white; /* 设置底部区域背景颜色为白色 */
+    border-top: 1px solid #ccc;
+    position: fixed; /* 固定在页面底部 */
+    bottom: 0; /* 紧贴页面底部 */
+    width: calc(50% + 40px); /* 调整宽度以匹配.container的宽度加上边距 */
+    box-sizing: border-box; /* 确保padding不会增加总宽度 */
+    margin-left: 20px; /* 为.footer添加左边距以匹配.container */
+  }
+  .footer .quantity-selector, .footer .duration-selector {
+    display: flex;
+    align-items: center;
+  }
+  .footer .quantity-selector button, .footer .duration-selector select {
+    margin-right: 5px;
+  }
+  .footer .price {
+    font-size: 1.2em;
+    color: red;
+  }
+  .footer .button-group button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .footer .button-group .next {
+    background-color: #DF0428;
+    color: white;
+    height: 30px;
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="section">
+    <label for="storage-type">系统盘</label>
+    <select id="storage-type">
+      <option value="ssd">通用型SSD</option>
+      <!-- Add more options as needed -->
+    </select>
+    <input type="number" value="40" min="1"> GB
+    <div class="add-disk">增加一块数据盘（您还可以增加8块数据盘）</div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="quantity-selector">
+    购买量
+    <button>-</button>
+    <span>1</span>
+    <button>+</button>
+  </div>
+  <div class="duration-selector">
+    <select>
+      <option value="6">6个月</option>
+      <!-- Add more options as needed -->
+    </select>
+  </div>
+  <div class="price">配置费用 ¥756</div>
+  <div class="button-group">
+    <button>取消</button>
+    <button class="next">下一步：网络配置</button>
+  </div>
+</div>
+
+</body>
+</html>
