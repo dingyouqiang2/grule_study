@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"grule_study/controller"
+	models "grule_study/model"
+	"grule_study/utils"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -19,13 +22,6 @@ type ExponentData struct {
 	Set   float64
 }
 
-type RuleForm struct {
-	RuleName       string   `form:"ruleName"`
-	RuleDesc       string   `form:"ruleDesc"`
-	RuleSalience   string   `form:"ruleSalience"`
-	RuleConditions []string `form:"ruleCondition"`
-	RuleLogic      []string `form:"ruleLogic"`
-}
 
 func main() {
 	r := gin.Default()
@@ -36,23 +32,8 @@ func main() {
 	r.GET("/grule/form/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "grule.tmpl", gin.H{})
 	})
-	r.POST("/grule/form/", func(c *gin.Context) {
-		var form RuleForm
-		c.ShouldBind(&form)
-		grule := fmt.Sprintf(`
-rule %s "%s" salience %s {
-    when
-        %s
-    Then
-        %s;
-}`, 
-        form.RuleName, form.RuleDesc, form.RuleSalience, strings.Join(form.RuleConditions, " && "), strings.Join(form.RuleLogic, ";\n\t\t"))
-        err := ioutil.WriteFile(fmt.Sprintf("grule/%s.grl", form.RuleName), []byte(grule), 0644)
-        if err != nil {
-            log.Println(err)
-        }
-		c.Redirect(http.StatusFound, "/grule/form/")
-	})
+	r.POST("/grule/form/", controller.WriteGruleForm)
+	// 这里测试前端直接传递grule给后端执行
 	r.POST("/number/", func(c *gin.Context) {
 		textareaContent := c.PostForm("textarea")
 		exponent := &ExponentData{
