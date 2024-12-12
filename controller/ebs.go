@@ -11,11 +11,11 @@ import (
 
 func WriteGruleForm(c *gin.Context) {
 	var form models.RuleForm
-		c.ShouldBind(&form)
-		grule := form.GetFormatGrule()
-        err := utils.WriteGruleFile(form.RuleName, grule)
-		if err != nil {
-			log.Println(err)
-		}
-		c.Redirect(http.StatusFound, "/grule/form/")
+	c.ShouldBind(&form)
+	grule := form.GetFormatGrule()
+	err := utils.WriteGruleFile(form.RuleName, grule)
+	if err != nil {
+		log.Println(err)
+	}
+	c.Redirect(http.StatusFound, "/grule/form/")
 }

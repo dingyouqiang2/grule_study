@@ -23,10 +23,17 @@ func main() {
 	r.GET("/index", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{})
 	})
+	// 填写grule表单保存到文件里
 	r.GET("/grule/form/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "grule.tmpl", gin.H{})
 	})
 	r.POST("/grule/form/", controller.WriteGruleForm)
+	r.GET("/ebs/", func(c *gin.Context) {
+
+	})
+	r.POST("/ebs/", func(c *gin.Context) {
+		
+	})
 	// 这里测试前端直接传递grule给后端执行
 	r.POST("/number/", func(c *gin.Context) {
 		textareaContent := c.PostForm("textarea")
