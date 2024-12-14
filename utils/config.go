@@ -18,7 +18,7 @@ func ReadConfig() {
 func CreateNode() {
 }
 
-func CreateGrule() {
+func CreateGrule(key string, newRule models.RuleForm) {
 	data, err := ioutil.ReadFile("config.json")
 	if err != nil {
 		log.Println("Error reading file:", err)
@@ -30,13 +30,25 @@ func CreateGrule() {
 		log.Println("Error unmarshalling JSON:", err)
 		return
 	}
-	for k, v := range rawMap {
-		var g Grules
-		if err := json.Unmarshal(v, &g); err != nil {
-			log.Printf("Failed to parse key '%s': %v\n", k, v)
-			continue
-		}
-		log.Println(g)
+	if _, exists := rawMap[key]; !exists {
+		g := Grules{}
+		g.Grules = append(g.Grules, newRule)
+	}
+	updatedJSON, err := json.MarshalIndent(g, "", "  ")
+	if err != nil {
+		log.Println("Error marshalling updated grules:", err)
+		return
+	}
+	rawMap[key] = updatedJSON
+	finalJSON, err := json.MarshalIndent(rawMap, "", "  ")
+	if err != nil {
+		log.Panicln("Error marshalling final JSON:", err)
+		return
+	}
+	err = ioutil.WriteFile("config.json", finalJSON, 0644)
+	if err != nil {
+		log.Panicln("Error writing to file:", err)
+		return
 	}
 }
 
