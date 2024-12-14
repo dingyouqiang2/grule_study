@@ -14,11 +14,11 @@ rule %s "%s" salience %s {
 }`
 
 type RuleForm struct {
-	RuleName       string   `form:"ruleName"`
-	RuleDesc       string   `form:"ruleDesc"`
-	RuleSalience   string   `form:"ruleSalience"`
-	RuleConditions []string `form:"ruleCondition"`
-	RuleLogic      []string `form:"ruleLogic"`
+	RuleName       string   `form:"ruleName" json:"rule_name"`
+	RuleDesc       string   `form:"ruleDesc" json:"rule_desc"`
+	RuleSalience   string   `form:"ruleSalience" json:"rule_salience"`
+	RuleConditions []string `form:"ruleCondition" json:"rule_conditions"`
+	RuleLogics      []string `form:"ruleLogic" json:"rule_logics"`
 }
 
 func (rf *RuleForm) GetFormatGrule() string {
@@ -28,6 +28,6 @@ func (rf *RuleForm) GetFormatGrule() string {
 		rf.RuleDesc, 
 		rf.RuleSalience, 
 		strings.Join(rf.RuleConditions, " && "), 
-		strings.Join(rf.RuleLogic, ";\n\t\t"),
+		strings.Join(rf.RuleLogics, ";\n\t\t"),
 	)
 }

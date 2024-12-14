@@ -2,6 +2,7 @@ package routers
 
 import (
 	"grule_study/controller"
+	"grule_study/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,5 +18,8 @@ func RegisterGruleRoutes(r *gin.Engine) {
 			c.HTML(http.StatusOK, "grule_ebs.html", gin.H{})
 		})
 		grule.POST("/post/", controller.WriteGruleForm)
+		grule.GET("/node/", func(c *gin.Context) {
+			utils.CreateGrule()
+		})
 	}
 }

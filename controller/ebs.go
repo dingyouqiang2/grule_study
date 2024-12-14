@@ -19,3 +19,8 @@ func WriteGruleForm(c *gin.Context) {
 	}
 	c.Redirect(http.StatusFound, "/grule/form/")
 }
+
+func WriteGruleForm2Config(c *gin.Context) {
+	var form models.RuleForm
+	c.ShouldBind(&form)
+}

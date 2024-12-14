@@ -1,3 +1,20 @@
 {
-    
+  "ebs": {
+    "grules": [
+        {
+            "rule_name": "EbsSsdGenericPerMonthCostRule",
+            "rule_desc": "通用型SSD磁盘(SSD-generic) 包月计费规则",
+            "rule_salience": "10",
+            "rule_conditions": [
+                "EBSCost.BillMode == 1",
+                "EBSCost.SyshdType == \"SSD-generic\""
+            ],
+            "rule_logics": [
+                "SSD_GENERIC = 0.7",
+                "EBSCost.Cost = SSD_GENERIC * EBSCost.InstanceCnt * EBSCost.CycleCount",
+                "Retract(\"EbsSsdGenericPerMonthCostRule\")"
+            ]
+        }
+    ]
+  }  
 }
