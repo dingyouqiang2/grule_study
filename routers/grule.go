@@ -13,6 +13,9 @@ func RegisterGruleRoutes(r *gin.Engine) {
 		grule.GET("/", func(c *gin.Context) {
 			c.HTML(http.StatusOK, "grule.html", gin.H{})
 		})
+		grule.GET("/ebs/", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "grule_ebs.html", gin.H{})
+		})
 		grule.POST("/post/", controller.WriteGruleForm)
 	}
 }
