@@ -1,5 +1,6 @@
 package models
 
+// 配置规则的表单
 type EBSCost struct { // 云硬盘费用
 	BillMode    int     // 按量(0)/包年月(1)
 	SyshdType   string  // 系统盘类型
