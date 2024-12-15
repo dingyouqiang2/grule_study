@@ -6,11 +6,13 @@
     <title>Document</title>
 </head>
 <body>
-    <p>{{ .key }} 规则列表</p>
-    {{ range .rules }}
-        <div>{{ . }}</div>
-    {{ end }}
-    <button><a href="/">新增</a></button>
+    <div>{{ .key }} 规则列表</div>
+    <ul>
+        {{ range .rules }}
+         <li>{{ . }}</li>
+        {{ end }}
+    </ul>
     <button><a href="/grule/">返回</a></button>
+    <button><a href="/grule/{{ .key }}/rule/add/">新增</a></button>
 </body>
 </html>

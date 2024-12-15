@@ -45,8 +45,7 @@ func RegisterGruleRoutes(r *gin.Engine) {
 		})
 		grule.GET("/:key/rule/add/", func(c *gin.Context) {
 			key := c.Param("key")
-
-			c.HTML(http.StatusOK, "grule_rule_add.html", gin.H{"key": key})
+			c.HTML(http.StatusOK, "grule_form.html", gin.H{"key": key})
 		})
 		// grule发布
 		grule.POST("/:key/post/", func(c *gin.Context) {
