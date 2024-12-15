@@ -12,7 +12,7 @@ import (
 func RegisterGruleRoutes(r *gin.Engine) {
 	grule := r.Group("/grule")
 	{
-		// grule列表
+		// 产品列表
 		grule.GET("/", func(c *gin.Context) {
 			configKeySlice, err := utils.ReadKeys()
 			if err != nil {
@@ -20,10 +20,17 @@ func RegisterGruleRoutes(r *gin.Engine) {
 			}
 			c.HTML(http.StatusOK, "grule.html", gin.H{"keySlice": configKeySlice})
 		})
-		// grule规则
+		// 产品规则
 		grule.GET("/:key", func(c *gin.Context) {
 			key := c.Param("key")
 			c.HTML(http.StatusOK, "grule_form.html", gin.H{"key": key})
+		})
+		// 产品新增
+		grule.GET("/key/add/", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "grule_key_add.html", gin.H{})
+		})
+		grule.POST("/key/add/", func(c *gin.Context) {
+			
 		})
 		// grule发布
 		grule.POST("/post/", func(c *gin.Context) {
