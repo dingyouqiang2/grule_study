@@ -34,6 +34,17 @@ func RegisterGruleRoutes(r *gin.Engine) {
 			utils.AddKey(key)
 			c.Redirect(http.StatusMovedPermanently, "/grule/")
 		})
+		// 规则列表
+		grule.GET("/:key/rule/list/", func(c *gin.Context) {
+			key := c.Param("key")
+
+			c.HTML(http.StatusOK, "grule_rule_list.html", gin.H{"key": key})
+		})
+		grule.GET("/:key/rule/add/", func(c *gin.Context) {
+			key := c.Param("key")
+
+			c.HTML(http.StatusOK, "grule_rule_add.html", gin.H{"key": key})
+		})
 		// grule发布
 		grule.POST("/:key/post/", func(c *gin.Context) {
 			var form models.RuleForm
