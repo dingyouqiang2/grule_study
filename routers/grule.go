@@ -19,8 +19,9 @@ func RegisterGruleRoutes(r *gin.Engine) {
 			}
 			c.HTML(http.StatusOK, "grule.html", gin.H{"keySlice": configKeySlice})
 		})
-		grule.GET("/ebs/", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "grule_ebs.html", gin.H{})
+		grule.GET("/:key", func(c *gin.Context) {
+			key := c.Param("key")
+			c.HTML(http.StatusOK, "grule_form.html", gin.H{"key": key})
 		})
 		grule.POST("/post/", func(c *gin.Context) {
 			var form models.RuleForm
