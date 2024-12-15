@@ -58,6 +58,39 @@ func AddKey(key string) error {
 	return nil
 }
 
+func ReadGrules(key string) (ruleSlice []string, _ error) {
+	// 读取 config.json 文件
+	data, err := ioutil.ReadFile("config.json")
+	if err != nil {
+		// 如果文件不存在，则初始化一个空的 JSON 对象
+		if os.IsNotExist(err) {
+			data = []byte("{}")
+		} else {
+			return nil, err
+		}
+	}
+
+	// 解析 JSON 文件为通用 map
+	var configMap map[string]map[string]interface{}
+
+	err = json.Unmarshal(data, &configMap)
+	if err != nil {
+		return nil, err
+	}
+
+	// 检查顶级键是否存在，若不存在则初始化
+	if _, exists := configMap[key]; !exists {
+		configMap[key] = make(map[string]interface{})
+	}
+
+	for k, v := range configMap[key] {
+		ruleSlice = append(ruleSlice, k)
+		log.Println(k, v)
+	}
+
+	return ruleSlice, nil
+}
+
 // CreateGrule 将 RuleForm 保存到动态顶级键下，并直接以 rule_name 为键
 func CreateGrule(key string, rule models.RuleForm) error {
 	// 读取 config.json 文件

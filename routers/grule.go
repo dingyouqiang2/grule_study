@@ -37,8 +37,11 @@ func RegisterGruleRoutes(r *gin.Engine) {
 		// 规则列表
 		grule.GET("/:key/rule/list/", func(c *gin.Context) {
 			key := c.Param("key")
-
-			c.HTML(http.StatusOK, "grule_rule_list.html", gin.H{"key": key})
+			rules, err := utils.ReadGrules(key)
+			if err != nil {
+				log.Println(err)
+			}
+			c.HTML(http.StatusOK, "grule_rule_list.html", gin.H{"key": key, "rules": rules})
 		})
 		grule.GET("/:key/rule/add/", func(c *gin.Context) {
 			key := c.Param("key")

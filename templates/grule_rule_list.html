@@ -6,7 +6,10 @@
     <title>Document</title>
 </head>
 <body>
-    <p>规则列表</p>
+    <p>{{ .key }} 规则列表</p>
+    {{ range .rules }}
+        <div>{{ . }}</div>
+    {{ end }}
     <button><a href="/">新增</a></button>
     <button><a href="">返回</a></button>
 </body>
