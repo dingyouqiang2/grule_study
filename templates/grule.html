@@ -6,7 +6,9 @@
     <title>Document</title>
 </head>
 <body>
-    <div><a href="/grule/ebs/">云硬盘</a></div>
+    {{ range .keySlice }}
+    <div><a href="/grule/{{ . }}/">{{ . }}</a></div>
+    {{ end }}
     <button><a href="/">返回</a></button>
     <button><a>增加</a></button>
 </body>

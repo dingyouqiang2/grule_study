@@ -8,6 +8,28 @@ import (
 	"os"
 )
 
+// 读取顶级键
+func ReadKeys() (keySlice []string, _ error) {
+	data, err := ioutil.ReadFile("config.json")
+	if err != nil {
+		// 如果文件不存在，则初始化一个空的 JSON 对象
+		if os.IsNotExist(err) {
+			data = []byte("{}")
+		} else {
+			return nil, err
+		}
+	}
+	var configMap map[string]interface{}
+	err = json.Unmarshal(data, &configMap)
+	if err != nil {
+		return nil, err
+	}
+	for k, _ := range configMap {
+		keySlice = append(keySlice, k)
+	}
+	return keySlice, nil
+}
+
 // CreateGrule 将 RuleForm 保存到动态顶级键下，并直接以 rule_name 为键
 func CreateGrule(key string, rule models.RuleForm) error {
 	// 读取 config.json 文件
