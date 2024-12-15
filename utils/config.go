@@ -30,6 +30,34 @@ func ReadKeys() (keySlice []string, _ error) {
 	return keySlice, nil
 }
 
+// 增加顶级键
+func AddKey(key string) error {
+	data, err := ioutil.ReadFile("config.json")
+	if err != nil {
+		// 如果文件不存在，则初始化一个空的 JSON 对象
+		if os.IsNotExist(err) {
+			data = []byte("{}")
+		} else {
+			return err
+		}
+	}
+	var configMap map[string]interface{}
+	err = json.Unmarshal(data, &configMap)
+	if err != nil {
+		return err
+	}
+	configMap[key] = make(map[string]interface{})
+	updatedData, err := json.MarshalIndent(configMap, "", "  ")
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile("config.json", updatedData, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // CreateGrule 将 RuleForm 保存到动态顶级键下，并直接以 rule_name 为键
 func CreateGrule(key string, rule models.RuleForm) error {
 	// 读取 config.json 文件

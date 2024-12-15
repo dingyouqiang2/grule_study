@@ -30,13 +30,17 @@ func RegisterGruleRoutes(r *gin.Engine) {
 			c.HTML(http.StatusOK, "grule_key_add.html", gin.H{})
 		})
 		grule.POST("/key/add/", func(c *gin.Context) {
-			
+			key := c.PostForm("name")
+			utils.AddKey(key)
+			c.Redirect(http.StatusMovedPermanently, "/grule/")
 		})
 		// grule发布
-		grule.POST("/post/", func(c *gin.Context) {
+		grule.POST("/:key/post/", func(c *gin.Context) {
 			var form models.RuleForm
 			c.ShouldBind(&form)
-			utils.CreateGrule("ebs", form)
+			key := c.Param("key")
+			utils.CreateGrule(key, form)
+			c.Redirect(http.StatusMovedPermanently, "/grule/")
 		})
 	}
 }
