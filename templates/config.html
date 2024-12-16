@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Editor</title>
+    <link rel="stylesheet" href="/static/css/jsoneditor.min.css">
+    <style>
+        /* 设置全屏显示 */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #jsoneditor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="jsoneditor"></div>
+    <button id="saveButton" style="position: absolute; bottom: 20px; right: 20px; padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Save
+    </button>
+    <script src="/static/js/jsoneditor.min.js"></script>
+    <script>
+        // 初始化 JSONEditor
+        const container = document.getElementById('jsoneditor');
+        const options = {
+            mode: 'code', // 支持的其他模式：'tree', 'view', 'form', 'text'
+        };
+        const editor = new JSONEditor(container, options);
+
+        // 默认加载 JSON 数据
+        fetch('/api/config')
+            .then(response => response.json())
+            .then(json => editor.set(json))
+            .catch(error => console.error('Error loading config:', error));
+
+        // 保存按钮逻辑
+        const saveButton = document.getElementById('saveButton');
+        saveButton.addEventListener('click', () => {
+            const updatedJSON = editor.get(); // 获取 JSON 数据
+            fetch('/api/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedJSON)
+            }).then(response => {
+                if (response.ok) {
+                    alert('Configuration saved successfully!');
+                } else {
+                    alert('Failed to save configuration.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
