@@ -1,10 +1,12 @@
 package models
 
-// 配置规则的表单
-type EBSCost struct { // 云硬盘费用
-	BillMode    int     // 按量(0)/包年月(1)
-	SyshdType   string  // 系统盘类型
-	InstanceCnt int     // 系统盘容量
-	CycleCount  int     // 包月时长
-	Cost        float32 // 费用
+// 云硬盘费用
+type EBS struct {
+	BillMode    int     `json:"billMode"`    // 按量(0)/包年月(1)
+	Region      string  `json:"region"`      // 区域
+	SyshdType   string  `json:"syshdType"`   // 系统盘类型
+	InstanceCnt int     `json:"instanceCnt"` // 系统盘容量
+	UnitPrice   float32 `json:"unitPrice"`   // 单价
+	CycleCount  int     `json:"cycleCount"`  // 包月时长
+	Count       int     `json:"count"`       // 数量
 }
