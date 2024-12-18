@@ -1,0 +1,28 @@
+version: '3'
+services:
+  apollo-configservice:
+    image: apolloconfig/apollo-configservice:latest
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    volumes:
+      - ./logs:/apollo/logs
+
+  apollo-adminservice:
+    image: apolloconfig/apollo-adminservice:latest
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    volumes:
+      - ./logs:/apollo/logs
+
+  apollo-portal:
+    image: apolloconfig/apollo-portal:latest
+    ports:
+      - "8070:8070"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    volumes:
+      - ./logs:/apollo/logs
