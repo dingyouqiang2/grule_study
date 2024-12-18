@@ -11,7 +11,5 @@ go get -u github.com/air-verse/air
 - 注册中心
   - apollo
   ```shell
-  go get -u github.com/cihub/seelog
-  go get -u github.com/coocood/freecache
-  go get -u github.com/zouyx/agollo
+  go get -u github.com/apolloconfig/agollo/v4@latest
   ```
