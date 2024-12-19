@@ -1,10 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"grule_study/models"
 	"log"
-	"net/http"
 	"reflect"
 
 	"github.com/apolloconfig/agollo/v4"
@@ -14,13 +14,20 @@ import (
 )
 
 func main() {
+	c := &config.AppConfig{
+		AppID:          "TYY",
+		Cluster:        "DEV",
+		IP:             "http://localhost:8081",
+		NamespaceName:  "EBS",
+		IsBackupConfig: true,
+		Secret:         "7637afdc84f8471daf395c3c7171e5e8",
+	}
+	client, _ := agollo.StartWithConfig(func() (*config.AppConfig, error) {
+		return c, nil
+	})
 	r := gin.Default()                // 路由
 	r.LoadHTMLGlob("templates/*")     // 模板
 	r.Static("/static", "./static")   // 静态文件
-	r.GET("/", func(c *gin.Context) { // 首页路由
-		c.HTML(http.StatusOK, "index.html", gin.H{})
-	})
-
 	r.GET("/test", func(c *gin.Context) {
 		ebs := models.EBS{}
 		ebsType := reflect.TypeOf(ebs)
@@ -29,27 +36,19 @@ func main() {
 			log.Printf("字段名: %s, 字段类型: %s\n", field.Name, field.Type)
 		}
 	})
-
 	r.GET("/agollo", func(ctx *gin.Context) {
-		c := &config.AppConfig{
-			AppID:          "SampleApp",
-			Cluster:        "DEV",
-			IP:             "http://localhost:8081",
-			NamespaceName:  "TEST1.EBS",
-			IsBackupConfig: true,
-			Secret:         "8c140253795e43c6ba85d7baaf2f4705",
-		}
-
-		client, _ := agollo.StartWithConfig(func() (*config.AppConfig, error) {
-			return c, nil
-		})
-		fmt.Println("初始化Apollo配置成功")
-
-		//Use your apollo key to test
 		cache := client.GetConfigCache(c.NamespaceName)
-		value, _ := cache.Get("key")
-		fmt.Println(value)
+		value, _ := cache.Get("rules")
+		fmt.Printf("%s \n%T\n", value, value)
 	})
-
+	r.GET("/rules/", func(ctx *gin.Context) {
+		cache := client.GetConfigCache(c.NamespaceName)
+		v, _ := cache.Get("rules")
+		var rulesMap map[string]string
+		json.Unmarshal([]byte(v.(string)), &rulesMap)
+		for k, v := range rulesMap {
+			log.Println(k, v)
+		}
+	})
 	r.Run() // 运行在8080端口
 }
