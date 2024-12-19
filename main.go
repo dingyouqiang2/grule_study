@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"grule_study/models"
-	"grule_study/routers"
 	"log"
 	"net/http"
 	"reflect"
@@ -18,8 +17,6 @@ func main() {
 	r := gin.Default()                // 路由
 	r.LoadHTMLGlob("templates/*")     // 模板
 	r.Static("/static", "./static")   // 静态文件
-	routers.RegisterApiRoutes(r)      // api路由
-	routers.RegisterConfigRoutes(r)   // 配置中心路由
 	r.GET("/", func(c *gin.Context) { // 首页路由
 		c.HTML(http.StatusOK, "index.html", gin.H{})
 	})
